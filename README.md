@@ -1,146 +1,89 @@
-# scThermoFlux-T2D-Islets
+# scAnalysis-T2D-Islets
 
-A reproducible research repository for the manuscript concept:
+Reproducible single-cell beta-cell validation repository for the manuscript:
 
-> **A nonequilibrium thermodynamic framework for transcriptomic disease-state transitions in type 2 diabetes pancreatic islets**
+> **Human Islet Transcriptomics in Type 2 Diabetes Reveals Conserved Dysfunction Axes and a Candidate Gene Panel**
 
-This repo implements a conservative, coarse-grained thermodynamic analysis of single-cell transcriptomic disease states. It treats the transcriptomic “landscape” as a **dimensionless quasi-potential** inferred from cell-state probability density, not as directly measured physical free energy. The main outputs are landscape deformation, graph-based transition structure, probability currents, detailed-balance violation, and entropy-production-like irreversibility scores.
+This repository contains the GSE221156 beta-cell analysis used as an independent, cell-type-resolved validation layer for the bulk-islet framework. The manuscript-facing analysis is donor-level and cross-sectional; it is intended to test whether the stress/identity pattern identified in bulk islets is detectable within beta cells themselves.
 
-## Core claims supported by this repo
+## Manuscript-facing primary analyses
 
-1. T2D islet cell states can be represented on a transcriptomic manifold.
-2. Disease-associated changes can be decomposed into:
-   - state occupancy shifts,
-   - quasi-potential changes,
-   - inferred transition asymmetry,
-   - probability currents,
-   - entropy-production-like irreversibility.
-3. Thermodynamic observables should be aggregated at the **donor level**, not treated as independent cell-level p-values.
-4. Cross-sectional data support **inferred transition structure**, not direct longitudinal progression.
+The primary single-cell validation uses 34 donors from GSE221156 (17 ND, 17 T2D) and focuses on three scores:
 
-## Recommended dataset hierarchy
+1. **BetaIdentitySecretion** — expanded 21-gene beta-cell identity/secretion module.
+2. **ImmuneStress** — the 14-gene immune/stress module used in the bulk framework.
+3. **IsletDysfunctionScore analog** — donor-level `z(ImmuneStress) - z(BetaIdentitySecretion)`.
 
-The repository is configured around public human islet datasets:
+The main manuscript reports the IsletDysfunctionScore analog and BetaIdentitySecretion as the principal single-cell validation results. ImmuneStress is nominally increased in T2D but does not survive Benjamini-Hochberg correction across the seven reported single-cell score tests.
 
-| role | accession | reason |
-|---|---|---|
-| Primary | GSE221156 | Largest T2D islet scRNA-seq atlas; 245,878 cells from 48 donors: 17 ND, 14 PD, 17 T2D. |
-| Validation | GSE153855 | High-quality Smart-seq2 dataset; 6 control and 5 T2D donors. |
-| Validation | E-MTAB-5061 | Segerstolpe/Palasantza human pancreas/islet Smart-seq2 resource; 2,942 cells, healthy and T2D. |
-| Validation | GSE81608 | Xin et al. single-cell endocrine islet dataset; 1,492 annotated α, β, δ, PP cells from ND and T2D donors. |
-| Validation | GSE86469 | Lawlor et al.; 638 single cells from 5 ND and 3 T2D donors. |
-| Cautious validation | GSE83139 | Includes juvenile, adult control, T1D and T2D donors; useful but confounded by donor class and age. |
-| Bulk module anchor | GSE164416 | Whole-islet RNA-seq, 133 donors across ND/IGT/T3cD/T2D; useful for module validation, not single-cell flux. |
+Exploratory single-cell scores are reported separately:
 
-See `data/metadata/dataset_inventory.tsv` and `docs/dataset_notes.md` for details.
+- **DedifferentiationStress**
+- **ERStress_UPR**
+- **OxidativePhosphorylation**
+- **DiseaseAxis**, defined exactly as
+  `z(ImmuneStress) + z(ERStress_UPR) + z(DedifferentiationStress) - z(BetaIdentitySecretion)`.
 
-## What is included
+`DiseaseAxis` is not interchangeable with the bulk IsletDysfunctionScore.
 
-```text
-scThermoFlux_T2D_islets/
-├── config/                         # YAML configuration files
-├── data/
-│   ├── metadata/                   # dataset inventory and module gene sets
-│   ├── raw/                        # local raw/processed external datasets, not versioned
-│   └── processed/                  # standardized h5ad/csv outputs, not versioned
-├── docs/                           # dataset and method notes
-├── manuscript/                     # manuscript outline, captions, methods draft
-├── notebooks/                      # placeholder notebooks with execution order
-├── results/                        # output tables, figures, models
-├── scripts/                        # command-line entry points
-├── src/scthermoflux/               # reusable Python package
-└── tests/                          # minimal smoke tests
-```
+## Key manuscript-facing results
 
-## Quick start: fully reproducible demo
+For GSE221156 beta cells:
 
-The demo creates synthetic control/T2D beta-cell-like data and runs the full landscape-flux-entropy workflow.
+| Score | T2D - ND delta | Mann-Whitney p | BH q |
+|---|---:|---:|---:|
+| IsletDysfunctionScore analog | +0.713 | 9.44e-4 | 0.00249 |
+| BetaIdentitySecretion | -0.123 | 5.72e-4 | 0.00249 |
+| ImmuneStress | +0.00214 | 0.0388 | 0.0543 |
+| DedifferentiationStress | +0.0706 | 0.00107 | 0.00249 |
+| DiseaseAxis | +0.917 | 0.00979 | 0.0171 |
 
-```bash
-conda env create -f environment.yml
-conda activate scthermoflux
-python scripts/00_make_demo_data.py
-python scripts/02_run_landscape_flux.py \
-  --input data/processed/demo_t2d_islet_cells.csv \
-  --dataset demo \
-  --outdir results/demo
-python scripts/03_make_figures.py \
-  --tables results/demo/tables \
-  --outdir results/demo/figures
-python scripts/04_audit_outputs.py --results results/demo
-```
+The repository also includes donor-level age, BMI, HbA1c, sex, assay version, and medication annotation where available. Medication metadata are incomplete and do not define an untreated T2D comparator; no causal drug-specific effect is inferred.
 
-Expected outputs:
+## Supplementary material
+
+The current manuscript supplement is deposited in:
 
 ```text
-results/demo/tables/cell_state_scores.csv
-results/demo/tables/microstate_table.csv
-results/demo/tables/edge_flux_table.csv
-results/demo/tables/donor_level_thermo.csv
-results/demo/tables/condition_comparison.csv
-results/demo/figures/figure_01_landscape.png
-results/demo/figures/figure_02_flux_network.png
-results/demo/figures/figure_03_donor_statistics.png
-results/demo/AUDIT_REPORT.md
+supplementary/Supplementary_Material.docx
 ```
 
-## Running on real single-cell data
+Supporting donor-level files are in the same directory. The supplement contains the primary and exploratory GSE221156 score definitions, donor metadata, multiple-testing-adjusted results, and the cross-fitted/nested-validation supporting tables from the companion bulk and ML repositories.
 
-The repository accepts either:
-
-1. a standardized `.h5ad` file, or
-2. a simple cell-by-gene `.csv`/`.tsv` table with metadata columns.
-
-For real datasets, first standardize your object so that `obs` contains:
-
-| column | required | meaning |
-|---|---:|---|
-| `donor_id` | yes | biological donor |
-| `condition` | yes | `ND`, `PD`, `T2D`, or other |
-| `cell_type` | yes | beta, alpha, delta, etc. |
-| `dataset` | recommended | accession or cohort label |
-| `sex`, `age`, `BMI`, `HbA1c` | optional | covariates |
-
-Then run:
+## Reproduce the manuscript-facing single-cell comparison
 
 ```bash
-python scripts/01_standardize_h5ad.py \
-  --input data/raw/GSE221156.h5ad \
-  --output data/processed/GSE221156_standardized.h5ad \
-  --dataset GSE221156 \
-  --condition-col disease_state \
-  --donor-col donor_id \
-  --celltype-col cell_type
-
-python scripts/02_run_landscape_flux.py \
-  --input data/processed/GSE221156_standardized.h5ad \
-  --dataset GSE221156 \
-  --cell-type beta \
-  --conditions ND,T2D \
-  --outdir results/GSE221156_beta
+python scripts/08_manuscript_singlecell_validation.py \
+  --input supplementary/GSE221156_donor_singlecell_scores_and_metadata.csv \
+  --outdir results/manuscript_validation
 ```
 
-## Method summary
+This regenerates the donor-level comparison table and the three-panel single-cell validation figure.
 
-For each cell, the workflow computes curated biological module scores and a disease-axis coordinate:
+## Repository organization
 
-* $\text{DiseaseAxis} \to z$
-* $\text{ImmuneStress} \to z$
-* $\text{ERStress} \to z$
-* $\text{BetaIdentitySecretion}$
+```text
+scAnalysis-T2D-Islets/
+├── config/
+├── data/metadata/
+├── docs/
+├── results/
+│   └── manuscript_validation/
+├── scripts/
+├── src/
+└── supplementary/
+```
 
-A low dimensional state representation is built from PCA or provided latent coordinates. Cell state density is estimated and converted into a dimensionless quasi-potential:
+Older landscape/transition scripts remain in the repository as exploratory legacy analyses. They are **not required for the manuscript's primary conclusions** and should not be interpreted as direct evidence of temporal progression or causal state transitions.
 
-$$\Phi(x) = -\log(P(x)) - \epsilon$$
+## Data source
 
-Microstates are constructed using $k$-means. A Markov kernel is inferred on the microstate graph with optional bias along the disease axis. The probability current is:
+Primary single-cell dataset: **GSE221156**, human pancreatic islet single-cell RNA-seq. The manuscript analysis uses the reintegrated beta-cell data and donor-level summaries for ND and T2D donors.
 
-$$J_{ij} = \pi_i K_{ij} - \pi_j K_{ji}$$
+## Related repositories
 
-and the entropy production-like score is:
-
-$$\sigma = \frac{1}{2} \sum_{i,j} J_{ij} \log\left(\frac{\pi_i K_{ij} + \epsilon}{\pi_j K_{ji} + \epsilon}\right)$$
-
+- Bulk cross-cohort transcriptomic integration: `ricardo-romero-ochoa/T2D-islet-integrative`
+- Machine learning and GSE50244 external validation: `ricardo-romero-ochoa/T2D-islet-ML-panel`
 
 ## License
 
