@@ -1,16 +1,30 @@
 modules:
   BetaIdentitySecretion:
-    description: "Curated beta-cell identity/secretion module used in prior T2D islet work."
+    role: primary
+    description: "Expanded beta-cell identity/secretion module used for the single-cell validation."
     genes: [RASGRP1, PPP1R1A, ENTPD3, ADCYAP1, FFAR4, TMED6, PLCXD3, PDE8B, CASR, PFKFB2, ACLY, TGFBR3, ASB9, PPM1K, SLC2A2, GABRA2, INS, IAPP, PDX1, MAFA, NKX6-1]
   ImmuneStress:
-    description: "Curated immune/stress module used in prior T2D islet work."
+    role: primary
+    description: "Fourteen-gene immune/stress module aligned with the bulk-islet framework."
     genes: [MICB, HLA-DRA, HLA-DPA1, IL1R2, IL1RL1, IDO1, SERPING1, FPR3, LTB4R, GBP2, TNFRSF10A, CFH, ADORA3, APOL1]
   ERStress_UPR:
-    description: "Unfolded protein response and ER stress markers relevant to beta-cell dysfunction."
+    role: exploratory
+    description: "Exploratory unfolded-protein-response and ER-stress module."
     genes: [HSPA5, XBP1, DDIT3, ATF4, ATF6, EIF2AK3, ERN1, HERPUD1, DNAJB9, PDIA4, EDEM1, SEL1L]
   OxidativePhosphorylation:
-    description: "Mitochondrial energy metabolism markers; use carefully with mitochondrial QC."
+    role: exploratory
+    description: "Exploratory mitochondrial energy-metabolism module."
     genes: [NDUFA1, NDUFB5, NDUFS1, SDHA, SDHB, UQCRC1, COX4I1, COX5A, ATP5F1A, ATP5F1B, ATP5MC1]
   DedifferentiationStress:
-    description: "Candidate beta-cell dedifferentiation/stress markers."
+    role: exploratory
+    description: "Exploratory beta-cell dedifferentiation/stress module."
     genes: [ALDH1A3, SOX9, HES1, MYC, LDHA, REST, NEUROG3, CDKN1A, CDKN2A]
+derived_scores:
+  IsletDysfunctionScore_sc:
+    role: primary
+    formula: "z(ImmuneStress) - z(BetaIdentitySecretion)"
+    description: "Single-cell donor-level analog of the bulk stress-minus-identity framework."
+  DiseaseAxis:
+    role: exploratory
+    formula: "z(ImmuneStress) + z(ERStress_UPR) + z(DedifferentiationStress) - z(BetaIdentitySecretion)"
+    description: "Exploratory single-cell composite; not interchangeable with IsletDysfunctionScore."
