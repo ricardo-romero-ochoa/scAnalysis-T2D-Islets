@@ -42,13 +42,13 @@ The repository also includes donor-level age, BMI, HbA1c, sex, assay version, an
 
 ## Supplementary material
 
-The current manuscript supplement is deposited in:
+A repository-readable copy of the current manuscript supplement is deposited at:
 
 ```text
-supplementary/Supplementary_Material.docx
+supplementary/Supplementary_Material.md
 ```
 
-Supporting donor-level files are in the same directory. The supplement contains the primary and exploratory GSE221156 score definitions, donor metadata, multiple-testing-adjusted results, and the cross-fitted/nested-validation supporting tables from the companion bulk and ML repositories.
+The exact Microsoft Word supplement used for journal resubmission is maintained in the submission package and can be attached separately to a GitHub release or archival deposit. Supporting donor-level CSV files are in the same directory. The supplement contains the primary and exploratory GSE221156 score definitions, donor metadata, multiple-testing-adjusted results, and the cross-fitted/nested-validation supporting tables from the companion bulk and ML repositories.
 
 ## Reproduce the manuscript-facing single-cell comparison
 
