@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software or the deposited supplementary analyses, please cite it using the metadata below."
+title: "scAnalysis-T2D-Islets"
+type: software
+authors:
+  - family-names: "Romero"
+    given-names: "Ricardo"
+    orcid: "https://orcid.org/0000-0002-4589-2984"
+repository-code: "https://github.com/ricardo-romero-ochoa/scAnalysis-T2D-Islets"
+url: "https://github.com/ricardo-romero-ochoa/scAnalysis-T2D-Islets"
+version: "v1.1.0"
+date-released: "2026-10-25"
+license: "MIT"
+abstract: "Reproducible donor-level single-cell beta-cell validation of conserved type 2 diabetes islet dysfunction signatures in GSE221156, with primary and exploratory module definitions, multiple-testing-adjusted results, clinical metadata, and manuscript supplementary material."
+keywords:
+  - "type 2 diabetes"
+  - "pancreatic islets"
+  - "beta cells"
+  - "single-cell RNA-seq"
+  - "GSE221156"
+  - "transcriptomics"
+  - "islet dysfunction"
+preferred-citation:
+  type: software
+  title: "scAnalysis-T2D-Islets"
+  authors:
+    - family-names: "Romero"
+      given-names: "Ricardo"
+      orcid: "https://orcid.org/0000-0002-4589-2984"
+  repository-code: "https://github.com/ricardo-romero-ochoa/scAnalysis-T2D-Islets"
+  version: "v1.1.0"
+  date-released: "2026-10-25"
